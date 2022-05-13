@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">firebase_topic</string>
+    <string name="facebook_app_id">394374779238991</string>
+    <string name="facebook_client_token">4bf372cd8563b546a5bbbf5bad861696</string>
+</resources>
