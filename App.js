@@ -1,16 +1,18 @@
+// import React from 'react';
+// import Providers from './src/navigation';
+// export default function App() {
+//   return <Providers />;
+// }
+
 import {View, Text} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-
-import LoadingScreen from './src/screens/LoadingScreen';
-import ButtonNavigator from './src/router';
-import Routes from './src/router';
-// import Router from './src/router';
-
+import Router from './src/router';
+import NavigatorBottom from './src/router';
 export default function App() {
   return (
     <NavigationContainer>
-      <Routes />
+      <Router />
     </NavigationContainer>
   );
 }

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Linking,
   View,
+  ActivityIndicator,
 } from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';

@@ -4,48 +4,113 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import Home from '../screens/Home';
 import Login from '../screens/Login';
-import Register from '../screens/Register';
-import Geolocation from '../screens/Geolocation';
+
 import ScanScreen from '../screens/Scan QR';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Geolocationn from '../screens/Geolocation';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Stack = createStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
-export default function Routes() {
+const MainApp = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Tab.Navigator>
+      <Tab.Screen
+        name="Geolocationn"
+        component={Geolocationn}
+        options={{
+          tabBarLabel: 'Location',
+          tabBarIcon: ({color, size}) => (
+            <Ionicons name="location-outline" color={color} size={size} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="ScanScreen"
+        component={ScanScreen}
+        options={{
+          tabBarLabel: 'Scan QR',
+          tabBarIcon: ({color, size}) => (
+            <Ionicons name="scan-outline" color={color} size={size} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({color, size}) => (
+            <Ionicons name="home" color={color} size={size} />
+          ),
+          headerShown: false,
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+const Router = () => {
+  return (
+    <Stack.Navigator initialRouteName="login">
       <Stack.Screen
         name="Login"
         component={Login}
-        options={{headerShown: false}}
-      />
+        options={{headerShown: false}}></Stack.Screen>
       <Stack.Screen
-        name="Home"
-        component={Home}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Register"
-        component={Register}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Geolocation"
-        component={Geolocationn}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="ScanScreen"
-        component={ScanScreen}
-        options={{headerShown: false}}
-      />
+        name="MainApp"
+        component={MainApp}
+        options={{headerShown: false}}></Stack.Screen>
     </Stack.Navigator>
   );
-}
+};
+
+export default Router;
+
+const styles = StyleSheet.create({});
+
+// const MainApp = () => {
+//   return (
+//     <Tab.Navigator>
+//       <Tab.Screen name="Home" component={Home} options={{headerShown: false}} />
+//       <Tab.Screen
+//         name="Geolocationn"
+//         component={Geolocationn}
+//         options={{headerShown: false}}
+//       />
+//       <Tab.Screen
+//         name="ScanScreen"
+//         component={ScanScreen}
+//         options={{headerShown: false}}
+//       />
+//     </Tab.Navigator>
+//   );
+// };
+
+// const MainRoutes = () => {
+//   return (
+//     <Stack.Navigator initialRouteName="MainApp">
+//       <Stack.Screen
+//         name="Login"
+//         component={Login}
+//         options={{headerShown: false}}
+//       />
+
+//       <Stack.Screen
+//         name="MainApp"
+//         component={MainApp}
+//         options={{headerShown: false}}
+//       />
+//     </Stack.Navigator>
+//   );
+// };
+
+// export default MainRoutes;
 
 // import * as React from 'react';
 // import {NavigationContainer} from '@react-navigation/native';
@@ -57,8 +122,8 @@ export default function Routes() {
 // import Geolocation from '../screens/Geolocation';
 // import Login from '../screens/Login';
 // import ScanScreen from '../screens/Scan QR';
-// import ButtonNavigator from './mainRoutes';
-//Screen names
+
+// // Screen names
 // const homeName = 'Home';
 // const geolocation = 'Geolocation';
 // const scanScreen = 'ScanScreen';
@@ -67,10 +132,10 @@ export default function Routes() {
 // const Tab = createBottomTabNavigator();
 // const Stack = createStackNavigator();
 
-// const ButtonNavigator = () => {
+// const NavigatorBottom = () => {
 //   return (
 //     <Tab.Navigator
-//       initialRouteName={login}
+//       initialRouteName={homeName}
 //       screenOptions={({route}) => ({
 //         tabBarIcon: ({focused, color, size}) => {
 //           let iconName;
@@ -112,7 +177,7 @@ export default function Routes() {
 
 // const Router = () => {
 //   return (
-//     <Stack.Navigator initialRouteName="Login">
+//     <Stack.Navigator initialRouteName="NavigatorBottom">
 //       <Stack.Screen
 //         name="Login"
 //         component={Login}
@@ -120,19 +185,8 @@ export default function Routes() {
 //       />
 
 //       <Stack.Screen
-//         name="ScanScreen"
-//         component={ScanScreen}
-//         options={{headerShown: false}}
-//       />
-//       <Stack.Screen
-//         name="Home"
-//         component={Home}
-//         options={{headerShown: false}}
-//       />
-
-//       <Stack.Screen
-//         name="ButtonNavigator"
-//         component={ButtonNavigator}
+//         name="NavigatorBottom"
+//         component={NavigatorBottom}
 //         options={{headerShown: false}}
 //       />
 //     </Stack.Navigator>

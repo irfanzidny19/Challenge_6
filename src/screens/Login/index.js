@@ -1,177 +1,184 @@
-import {View, Text, TextInput, Button} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  SafeAreaView,
+  Button,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {AccessToken, LoginButton} from 'react-native-fbsdk-next';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {firebase} from '@react-native-firebase/auth';
 import TouchID from 'react-native-touch-id';
-import ButtonNavigator from '../../router/mainRoutes';
-
-// import FirebaseUtil from '../../utils/FirebaseUtil';
+import Buttonn from '../../components/Button';
 import {
   GoogleSignin,
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {LoginButton, AccessToken} from 'react-native-fbsdk-next';
 
-GoogleSignin.configure({
-  webClientId:
-    '719105775509-d4149mbgsmt0b63athth56ukd7c71c98.apps.googleusercontent.com',
-});
-
-// Settings.setAppID('394374779238991');
-
-function onFingerPrintPress() {
-  const optionalConfigObject = {
-    title: 'Authentication Required', // Android
-    imageColor: '#e00606', // Android
-    imageErrorColor: '#ff0000', // Android
-    sensorDescription: 'Touch sensor', // Android
-    sensorErrorDescription: 'Failed', // Android
-    cancelText: 'Cancel', // Android
-    fallbackLabel: 'Show Passcode', // iOS (if empty, then label is hidden)
-    unifiedErrors: false, // use unified error messages (default false)
-    passcodeFallback: false, // iOS - allows the device to fall back to using the passcode, if faceid/touch is not available. this does not mean that if touchid/faceid fails the first few times it will revert to passcode, rather that if the former are not enrolled, then it will use the passcode.
-  };
-
-  TouchID.authenticate(
-    'to demo this react-native component',
-    optionalConfigObject,
-  )
-    .then(success => {
-      console.log(success);
-      alert('Authenticated Successfully, Signed in with Fingerprint!');
-    })
-    .catch(error => {
-      console.log(error);
-      alert('Authentication Failed');
-    });
-}
-
-const _signIn = async () => {
-  try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    console.log(userInfo);
-  } catch (error) {
-    console.log(error);
-    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-      // user cancelled the login flow
-    } else if (error.code === statusCodes.IN_PROGRESS) {
-      // operation (e.g. sign in) is in progress already
-    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      // play services not available or outdated
-    } else {
-      // some other error happened
-    }
-  }
-};
-export default function Login(props) {
-  // Login
+const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // SignUp
-  const [create, setCreate] = useState(false);
+  const login = () => {
+    const body = {
+      email: email,
+      password: password,
+    };
+    console.log('form:', body);
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(res => {
+        console.log('success: ', res);
 
-  const signIn = () => {
-    FirebaseUtil.signIn(email, password).catch(e =>
-      alert('password email salah'),
-    );
+        navigation.navigate('MainApp', {
+          email: res.user.email,
+        });
+      })
+      .catch(err => console.log('error: ', err));
   };
-  const signUp = () => {};
+
+  GoogleSignin.configure({
+    webClientId:
+      '973985605184-atf8ueaj79osgu9s2i3dr4j43brc6v4t.apps.googleusercontent.com',
+  });
+
+  const _signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo);
+    } catch (error) {
+      console.log(error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
+  };
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log('user: ', user);
+        TouchID.authenticate('to demo this react-native component')
+          .then(success => {
+            console.log(success);
+            alert('Login Sukses');
+            navigation.replace('MainApp');
+          })
+          .catch(error => {
+            console.log(error);
+            alert('Login Gagal');
+          });
+      }
+    });
+  }, []);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: '#454e4f',
-        justifyContent: 'center',
-        padding: 20,
-      }}>
-      <View>
-        <TextInput
-          placeholder="Email"
-          onChangeText={setEmail}
-          value={email}
-          style={{
-            borderWidth: 1,
-            borderColor: 'grey',
-            padding: 10,
-            marginBottom: 20,
-            marginTop: 100,
-            borderRadius: 5,
-          }}
-        />
+    <SafeAreaView style={styles.container}>
+      <TextInput
+        style={styles.email}
+        placeholder="E-mail"
+        placeholderTextColor={'grey'}
+        selectionColor={'grey'}
+        onChangeText={text => {
+          setEmail(text);
+        }}
+      />
 
-        <TextInput
-          placeholder="Password"
-          onChangeText={setPassword}
-          value={password}
-          style={{
-            borderWidth: 1,
-            borderColor: 'grey',
-            padding: 10,
-            marginBottom: 20,
+      <TextInput
+        style={styles.password}
+        placeholder="Password"
+        placeholderTextColor={'grey'}
+        selectionColor={'grey'}
+        secureTextEntry={true}
+        onChangeText={text => {
+          setPassword(text);
+        }}
+      />
 
-            borderRadius: 5,
-          }}
-          secureTextEntry={true}
-        />
-        {create ? (
-          <>
-            <Button title="Sign In" onPress={() => signUp()} />
-            <Text
-              style={{
-                color: 'yellow',
-                marginTop: 20,
-              }}
-              onPress={() => setCreate(false)}>
-              signIn
-            </Text>
-          </>
-        ) : (
-          <>
-            <Button title="Sign In" onPress={() => signIn()} />
-            <Text
-              style={{
-                color: 'yellow',
-                marginTop: 20,
-              }}
-              onPress={() => setCreate(true)}>
-              Create Account
-            </Text>
-          </>
-        )}
-        {/* <TouchableOpacity onPress={() => props.navigation.navigate('Home')}>
-          <Text>App</Text>
-        </TouchableOpacity> */}
+      <View style={styles.LoginButton}>
+        <Button title={'Login'} onPress={login} />
       </View>
-      <View style={{marginTop: 200}}>
-        <GoogleSigninButton
-          style={{width: 300, height: 50, alignSelf: 'center'}}
-          size={GoogleSigninButton.Size.Wide}
-          color={GoogleSigninButton.Color.Dark}
-          onPress={_signIn}
-          // disabled={this.state.isSigninInProgress}
-        />
-        <LoginButton
-          style={{width: 300, height: 40, alignSelf: 'center', marginTop: 10}}
-          onLoginFinished={(error, result) => {
-            if (error) {
-              console.log('login has error: ' + result.error);
-            } else if (result.isCancelled) {
-              console.log('login is cancelled.');
-            } else {
-              AccessToken.getCurrentAccessToken().then(data => {
-                console.log(data.accessToken.toString());
-              });
-            }
-          }}
-          onLogoutFinished={() => console.log('logout.')}
-        />
-        <View style={{marginTop: 10}}>
-          <Button title="Fingerprint" onPress={() => onFingerPrintPress()} />
-        </View>
-      </View>
-    </View>
+
+      <GoogleSigninButton
+        style={styles.GoogleButton}
+        size={GoogleSigninButton.Size.Wide}
+        color={GoogleSigninButton.Color.Light}
+        onPress={_signIn}
+      />
+
+      <LoginButton
+        style={styles.FacebookButton}
+        onLoginFinished={(error, result) => {
+          if (error) {
+            console.log('login has error: ' + result.error);
+          } else if (result.isCancelled) {
+            console.log('login is cancelled.');
+          } else {
+            AccessToken.getCurrentAccessToken().then(data => {
+              console.log(data.accessToken.toString());
+            });
+          }
+        }}
+        onLogoutFinished={() => console.log('logout.')}
+      />
+
+      {/* <Button title="Fingerprint" onPress={() => onFingerPrintPress()} /> */}
+    </SafeAreaView>
   );
-}
+};
+
+export default Login;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    padding: 20,
+  },
+
+  email: {
+    borderWidth: 1,
+    borderColor: 'grey',
+    padding: 10,
+    marginBottom: 20,
+    marginTop: 70,
+    borderRadius: 5,
+    color: 'white',
+  },
+  password: {
+    borderWidth: 1,
+    borderColor: 'grey',
+    padding: 10,
+    marginBottom: 20,
+    color: 'white',
+    borderRadius: 5,
+  },
+  LoginButton: {
+    marginTop: 30,
+    width: 300,
+    alignSelf: 'center',
+  },
+  GoogleButton: {
+    marginTop: 10,
+    marginLeft: 30,
+  },
+  FacebookButton: {
+    width: 303,
+    height: 45,
+    alignSelf: 'center',
+    marginTop: 10,
+    // marginLeft: 5,
+  },
+});
